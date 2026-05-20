@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Autoškola Ing. Michael Kuchta | Bučovice & Rousínov",
   description:
-    "Profesionální autoškola s pobočkami v Bučovicích a Rousínově. Výcvik skupin AM, A1, A2, A, B. Rychlokurz skupiny B za 6 týdnů.",
+    "Profesionální autoškola s pobočkami v Bučovicích a Rousínově. Výcvik skupin AM, A1, A2, A, B. Rychlokurz skupiny B za 6 týdnů od 26 000 Kč.",
   keywords: [
     "autoškola",
     "Bučovice",
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
     "výcvik",
     "skupina B",
     "motocykly",
+    "rychlokurz",
   ],
 };
 
@@ -35,9 +38,10 @@ export default function RootLayout({
   return (
     <html
       lang="cs"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${playfair.variable} ${inter.variable}`}
     >
-      <body className="min-h-full flex flex-col bg-white text-slate-900">
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        <div className="grain" aria-hidden />
         {children}
       </body>
     </html>
