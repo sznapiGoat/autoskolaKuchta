@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, Clock } from "lucide-react";
+import { ChevronRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 import {
   branches,
   contactInfo,
@@ -7,16 +7,16 @@ import {
   officialFees,
   schoolFees,
 } from "./constants/mockData";
+import { BranchSwitcher } from "./components/BranchSwitcher";
+import { HeroSection } from "./components/HeroSection";
+import { ScrollFadeSection } from "./components/ScrollFadeSection";
 
-// ── Utility ────────────────────────────────────────────────────────────────
+// ── Utilities ──────────────────────────────────────────────────────────────
 
-const czk = (n: number) =>
-  n.toLocaleString("cs-CZ") + " Kč";
+const czk = (n: number) => n.toLocaleString("cs-CZ") + " Kč";
+const tel = (phone: string) => "+420" + phone.replace(/\s/g, "");
 
-const tel = (phone: string) =>
-  "+420" + phone.replace(/\s/g, "");
-
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ── Shared primitives ──────────────────────────────────────────────────────
 
 function SectionEyebrow({ children }: { children: React.ReactNode }) {
   return (
@@ -43,9 +43,6 @@ export default function Home() {
   const carCourses = courses.filter((c) =>
     ["b", "b-rychlo", "kondice"].includes(c.id)
   );
-
-  const courseB = courses.find((c) => c.id === "b")!;
-  const courseQuick = courses.find((c) => c.id === "b-rychlo")!;
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900">
@@ -87,7 +84,6 @@ export default function Home() {
               {contactInfo.phone}
             </a>
           </nav>
-          {/* Mobile phone link */}
           <a
             href={`tel:${tel(contactInfo.phone)}`}
             className="flex items-center gap-1.5 text-sm font-semibold text-slate-900 sm:hidden"
@@ -99,115 +95,28 @@ export default function Home() {
       </header>
 
       <main>
-        {/* ════════════════════════════════════ HERO */}
-        <section className="relative overflow-hidden bg-slate-900 px-6 pb-24 pt-20">
-          {/* Subtle grid texture */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg,#fff 0,#fff 1px,transparent 1px,transparent 48px),repeating-linear-gradient(90deg,#fff 0,#fff 1px,transparent 1px,transparent 48px)",
-            }}
-          />
-
-          <div className="relative mx-auto max-w-6xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
-              Výcvik skupin AM · A1 · A2 · A · B
-            </p>
-            <h1 className="mb-6 text-6xl font-black leading-[0.95] tracking-tight text-white sm:text-8xl">
-              Auto&shy;škola
-              <br />
-              <span className="text-slate-400">Kuchta</span>
-            </h1>
-
-            {/* Stat bar */}
-            <div className="mb-8 flex flex-wrap gap-px">
-              <div className="border border-slate-700 bg-slate-800 px-5 py-3">
-                <p className="text-xs text-slate-500">Skupina B</p>
-                <p className="text-xl font-bold tabular text-white">
-                  {czk(courseB.price!)}
-                </p>
-              </div>
-              <div className="border border-slate-700 bg-slate-800 px-5 py-3">
-                <p className="text-xs text-slate-500">Rychlokurz B</p>
-                <p className="text-xl font-bold tabular text-white">
-                  {czk(courseQuick.price!)}
-                </p>
-              </div>
-              <div className="border border-slate-700 bg-slate-800 px-5 py-3">
-                <p className="text-xs text-slate-500">Rychlokurz za</p>
-                <p className="flex items-center gap-1.5 text-xl font-bold text-white">
-                  <Clock size={16} className="text-slate-400" />
-                  {courseQuick.timeframe}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <a
-                href={`tel:${tel(contactInfo.phone)}`}
-                className="inline-flex items-center gap-2 border border-white bg-white px-6 py-3 text-sm font-bold text-slate-900 transition-colors hover:bg-slate-100"
-              >
-                <Phone size={15} />
-                Zavolat: {contactInfo.phone}
-              </a>
-              <a
-                href={`mailto:${contactInfo.email}`}
-                className="inline-flex items-center gap-2 border border-slate-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-slate-400"
-              >
-                <Mail size={15} />
-                {contactInfo.email}
-              </a>
-            </div>
-          </div>
-        </section>
+        {/* ════════════════════════════════════ HERO (client component) */}
+        <HeroSection />
 
         {/* ════════════════════════════════════ BRANCHES */}
-        <section
+        <ScrollFadeSection
           id="provozovny"
           className="border-b border-slate-200 px-6 py-16"
         >
           <div className="mx-auto max-w-6xl">
             <SectionEyebrow>Provozovny</SectionEyebrow>
             <SectionHeading>Kde nás najdete</SectionHeading>
-
-            <div className="mt-8 grid sm:grid-cols-2">
-              {branches.map((branch, i) => (
-                <div
-                  key={branch.id}
-                  className={[
-                    "border border-slate-200 p-8",
-                    i === 0 ? "sm:border-r-0" : "",
-                  ].join(" ")}
-                >
-                  <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-                    {branch.classroom}
-                  </p>
-                  <div className="flex items-start gap-3">
-                    <MapPin
-                      size={16}
-                      className="mt-0.5 shrink-0 text-slate-400"
-                    />
-                    <div>
-                      <p className="text-base font-semibold text-slate-900">
-                        {branch.address}
-                      </p>
-                      {branch.note && (
-                        <p className="mt-1 text-sm text-slate-500">
-                          {branch.note}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Interactive tab switcher with layoutId sliding pill */}
+            <BranchSwitcher />
           </div>
-        </section>
+        </ScrollFadeSection>
 
         {/* ════════════════════════════════════ COURSES */}
-        <section id="vycvik" className="border-b border-slate-200 px-6 py-16">
+        <ScrollFadeSection
+          id="vycvik"
+          className="border-b border-slate-200 px-6 py-16"
+          delay={0.05}
+        >
           <div className="mx-auto max-w-6xl">
             <SectionEyebrow>Výcvik skupin</SectionEyebrow>
             <SectionHeading>Nabídka kurzů</SectionHeading>
@@ -221,14 +130,14 @@ export default function Home() {
                 {motorCourses.map((course) => (
                   <div
                     key={course.id}
-                    className="grid grid-cols-[56px_1fr_auto] items-center gap-x-6 px-6 py-4"
+                    className="group grid cursor-default grid-cols-[56px_1fr_auto_20px] items-center gap-x-5 px-6 py-4 transition-colors duration-150 hover:bg-slate-50"
                   >
                     {/* Group badge */}
-                    <span className="inline-flex h-8 w-14 items-center justify-center border border-slate-200 font-mono text-xs font-bold tracking-wider text-slate-700">
+                    <span className="inline-flex h-8 w-14 items-center justify-center border border-slate-200 font-mono text-xs font-bold tracking-wider text-slate-700 transition-colors duration-150 group-hover:border-slate-400">
                       sk.&nbsp;{course.group}
                     </span>
                     {/* Title + meta */}
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold leading-snug text-slate-900">
                         {course.title}
                       </p>
@@ -242,6 +151,11 @@ export default function Home() {
                     <span className="whitespace-nowrap text-right text-sm text-slate-500">
                       {course.age}
                     </span>
+                    {/* Trailing arrow */}
+                    <ChevronRight
+                      size={14}
+                      className="justify-self-end text-slate-200 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-slate-400"
+                    />
                   </div>
                 ))}
               </div>
@@ -256,14 +170,14 @@ export default function Home() {
                 {carCourses.map((course) => (
                   <div
                     key={course.id}
-                    className="grid grid-cols-[1fr_auto] items-start gap-6 px-6 py-5 sm:grid-cols-[56px_1fr_auto] sm:items-center"
+                    className="group grid cursor-default grid-cols-[1fr_auto_20px] items-start gap-5 px-6 py-5 transition-colors duration-150 hover:bg-slate-50 sm:grid-cols-[56px_1fr_auto_20px] sm:items-center"
                   >
-                    {/* Group badge — hidden on mobile, visible sm+ */}
-                    <span className="hidden h-8 w-14 items-center justify-center border border-slate-200 font-mono text-xs font-bold tracking-wider text-slate-700 sm:inline-flex">
+                    {/* Group badge — desktop only */}
+                    <span className="hidden h-8 w-14 items-center justify-center border border-slate-200 font-mono text-xs font-bold tracking-wider text-slate-700 transition-colors duration-150 group-hover:border-slate-400 sm:inline-flex">
                       sk.&nbsp;{course.group.split("–")[0].trim()}
                     </span>
                     {/* Title + meta */}
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold leading-snug text-slate-900">
                         {course.title}
                       </p>
@@ -287,7 +201,7 @@ export default function Home() {
                         </p>
                       )}
                     </div>
-                    {/* Price / age */}
+                    {/* Price / age — authoritative heavy weight */}
                     <div className="shrink-0 text-right">
                       {course.price !== undefined ? (
                         <>
@@ -306,24 +220,30 @@ export default function Home() {
                         </span>
                       )}
                     </div>
+                    {/* Trailing arrow */}
+                    <ChevronRight
+                      size={14}
+                      className="self-center justify-self-end text-slate-200 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-slate-400"
+                    />
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </section>
+        </ScrollFadeSection>
 
         {/* ════════════════════════════════════ FEES */}
-        <section
+        <ScrollFadeSection
           id="poplatky"
           className="border-b border-slate-200 bg-slate-50 px-6 py-16"
+          delay={0.05}
         >
           <div className="mx-auto max-w-6xl">
             <SectionEyebrow>Poplatky</SectionEyebrow>
             <SectionHeading>Poplatky a sankce</SectionHeading>
 
             <div className="mt-8 grid gap-8 sm:grid-cols-2">
-              {/* Official fees */}
+              {/* ── Official government fees — clean, neutral ── */}
               <div>
                 <h3 className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                   Poplatky na magistrátu
@@ -334,9 +254,7 @@ export default function Home() {
                       key={i}
                       className="flex items-center justify-between gap-4 px-5 py-3"
                     >
-                      <span className="text-sm text-slate-700">
-                        {fee.label}
-                      </span>
+                      <span className="text-sm text-slate-700">{fee.label}</span>
                       <span className="shrink-0 font-mono text-sm font-semibold tabular text-slate-900">
                         {fee.amount.toLocaleString("cs-CZ")}&nbsp;{fee.currency}
                       </span>
@@ -345,7 +263,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* School fees */}
+              {/* ── School penalties — subtle red semantic tint ── */}
               <div>
                 <h3 className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                   Školní poplatky a sankce
@@ -354,13 +272,14 @@ export default function Home() {
                   {schoolFees.map((fee, i) => (
                     <div
                       key={i}
-                      className="border border-slate-200 bg-white px-5 py-4"
+                      className="border border-slate-200 border-l-[3px] border-l-red-400/50 bg-white px-5 py-4"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <p className="text-sm font-semibold text-slate-900">
                           {fee.label}
                         </p>
-                        <span className="shrink-0 font-mono text-base font-black tabular text-slate-900">
+                        {/* Price in muted red — reads instantly as penalty */}
+                        <span className="shrink-0 font-mono text-base font-black tabular text-red-700/80">
                           {czk(fee.fee)}
                         </span>
                       </div>
@@ -373,40 +292,50 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </ScrollFadeSection>
 
         {/* ════════════════════════════════════ GUIDANCE */}
-        <section
+        <ScrollFadeSection
           id="informace"
           className="border-b border-slate-200 px-6 py-16"
+          delay={0.05}
         >
           <div className="mx-auto max-w-6xl">
             <SectionEyebrow>Jak se přihlásit</SectionEyebrow>
             <SectionHeading>Důležité informace</SectionHeading>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {/*
+              sm:grid-cols-2 prevents the 3-column squeeze at 640px,
+              lg:grid-cols-3 expands once there's real space.
+              min-w-0 on each card stops long words from blowing out the cell.
+            */}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {guidance.map((item) => (
                 <div
                   key={item.id}
-                  className="border-l-[3px] border-slate-900 bg-slate-50 px-6 py-5"
+                  className="min-w-0 border-l-[3px] border-slate-900 bg-slate-50 px-6 py-5"
                 >
                   <p className="mb-2 text-sm font-bold text-slate-900">
                     {item.title}
                   </p>
-                  <p className="text-sm leading-relaxed text-slate-600">
+                  <p className="break-words text-sm leading-relaxed text-slate-600">
                     {item.body}
                   </p>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </ScrollFadeSection>
 
         {/* ════════════════════════════════════ CONTACT CTA */}
-        <section className="border-b border-slate-200 px-6 py-16">
+        <ScrollFadeSection
+          className="border-b border-slate-200 px-6 py-16"
+          delay={0.05}
+        >
           <div className="mx-auto max-w-6xl">
             <div className="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
-              <div>
+              {/* min-w-0 prevents text from bleeding into button column */}
+              <div className="min-w-0">
                 <SectionEyebrow>Kontakt</SectionEyebrow>
                 <h2 className="text-2xl font-extrabold tracking-tight text-slate-900">
                   Přihlásit se nebo se zeptat?
@@ -415,7 +344,7 @@ export default function Home() {
                   Zavolejte nebo napište — rádi vám poradíme s výběrem skupiny.
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:items-end">
+              <div className="flex shrink-0 flex-col gap-3 sm:items-end">
                 <a
                   href={`tel:${tel(contactInfo.phone)}`}
                   className="inline-flex items-center gap-2 border border-slate-900 bg-slate-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-slate-800"
@@ -433,14 +362,13 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </ScrollFadeSection>
       </main>
 
       {/* ════════════════════════════════════ FOOTER */}
       <footer className="bg-slate-900 px-6 py-14">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-10 sm:grid-cols-3">
-            {/* Brand */}
             <div>
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
                 Autoškola
@@ -449,8 +377,6 @@ export default function Home() {
                 {contactInfo.owner}
               </p>
             </div>
-
-            {/* Contact */}
             <div>
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
                 Kontakt
@@ -472,8 +398,6 @@ export default function Home() {
                 </a>
               </div>
             </div>
-
-            {/* Branches */}
             <div>
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
                 Provozovny
@@ -481,10 +405,7 @@ export default function Home() {
               <div className="flex flex-col gap-4">
                 {branches.map((b) => (
                   <div key={b.id} className="flex items-start gap-2">
-                    <MapPin
-                      size={13}
-                      className="mt-0.5 shrink-0 text-slate-500"
-                    />
+                    <MapPin size={13} className="mt-0.5 shrink-0 text-slate-500" />
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                         {b.classroom}
